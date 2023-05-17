@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
+
 class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskSelectedListener {
 
     private lateinit var taskAdapter: TaskAdapter
@@ -31,7 +32,7 @@ class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskSelectedListener {
         taskAdapter = TaskAdapter(tasks, this)
         recyclerView.adapter = taskAdapter
 
-        // Agregar tareas de ejemplo al RecyclerView
+/*        // Agregar tareas de ejemplo al RecyclerView
         val exampleTasks = listOf(
             Task("Buy groceries", "Milk, eggs, bread"),
             Task("Study for test", "Chapters 4-6"),
@@ -39,14 +40,14 @@ class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskSelectedListener {
             Task("Clean the house", "Living room, kitchen, bathroom")
         )
         tasks.addAll(exampleTasks)
-        taskAdapter.notifyDataSetChanged()
+        taskAdapter.notifyDataSetChanged()*/
 
         addButton.setOnClickListener {
             // Obtener el título y la descripción de la tarea ingresados por el usuario
             val title = titleEditText.text.toString()
             val description = descriptionEditText.text.toString()
             // Crear una nueva tarea con el título y la descripción
-            val task = Task(title, description)
+            val task = Task(title=title, description=description)
             // Agregar la tarea al adaptador y actualizar la lista
             taskAdapter.addTask(task)
         }
@@ -62,7 +63,7 @@ class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskSelectedListener {
                     .setMessage("Are you sure you want to update this task?")
                     .setPositiveButton("Yes") { _, _ ->
                         // Crear una nueva tarea con el título y la descripción actualizados
-                        val newTask = Task(title, description)
+                        val newTask = Task(title=title, description=description)
                         // Obtener la posición de la tarea antigua en la lista de tareas
                         val position = tasks.indexOf(oldTask)
                         if (position != -1) {
@@ -109,3 +110,4 @@ class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskSelectedListener {
         taskAdapter.sortTasks()
     }
 }
+
