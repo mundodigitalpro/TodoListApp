@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskSelectedListener {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val task = tasks[position]
-                onTaskChecked(task)
+                onTaskSwiped(task)
 
                 // Crear y mostrar un Snackbar
                 val snackbar = Snackbar.make(findViewById(R.id.recycler_view), "Tarea terminada", Snackbar.LENGTH_SHORT)
@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskSelectedListener {
         // Ordenar las tareas en el adaptador
         taskAdapter.sortTasks()
     }
-    override fun onTaskChecked(task: Task) {
+    override fun onTaskSwiped(task: Task) {
         task.isCompleted = true
         val position = tasks.indexOf(task)
         if (position != -1) {
