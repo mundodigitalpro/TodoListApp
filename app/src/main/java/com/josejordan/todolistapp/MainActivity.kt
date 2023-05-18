@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskSelectedListener {
 
@@ -30,6 +32,32 @@ class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskSelectedListener {
         recyclerView.layoutManager = LinearLayoutManager(this)
         taskAdapter = TaskAdapter(tasks, this)
         recyclerView.adapter = taskAdapter
+
+        // Código para ItemTouchHelper
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                // No nos importa el movimiento
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val task = tasks[position]
+                onTaskChecked(task)
+
+                // Crear y mostrar un Snackbar
+                val snackbar = Snackbar.make(findViewById(R.id.recycler_view), "Tarea terminada", Snackbar.LENGTH_SHORT)
+                snackbar.show()
+            }
+        })
+
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+        // Fin del código para ItemTouchHelper
+
 
         // Agregar tareas de ejemplo al RecyclerView
         val exampleTasks = listOf(
@@ -108,4 +136,17 @@ class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskSelectedListener {
         // Ordenar las tareas en el adaptador
         taskAdapter.sortTasks()
     }
+    override fun onTaskChecked(task: Task) {
+        task.isCompleted = true
+        val position = tasks.indexOf(task)
+        if (position != -1) {
+            taskAdapter.deleteTask(position)
+            selectedTask = null
+            // Crear y mostrar un Snackbar
+            val snackbar = Snackbar.make(findViewById(R.id.recycler_view), "Tarea terminada", Snackbar.LENGTH_SHORT)
+            snackbar.show()
+
+        }
+    }
+
 }

@@ -13,6 +13,7 @@ class TaskAdapter(private val tasks: MutableList<Task>, private val listener: On
     // Interfaz para el evento de selección de tarea
     interface OnTaskSelectedListener {
         fun onTaskSelected(task: Task)
+        fun onTaskChecked(task: Task)
     }
 
     // Clase ViewHolder que representa cada elemento de la lista
@@ -22,7 +23,7 @@ class TaskAdapter(private val tasks: MutableList<Task>, private val listener: On
         private val completedCheckBox: CheckBox = view.findViewById(R.id.task_completed_check_box)
 
         // Método para vincular una tarea a las vistas del ViewHolder
-        fun bind(task: Task) {
+/*        fun bind(task: Task) {
             titleTextView.text = task.title
             descriptionTextView.text = task.description
             completedCheckBox.isChecked = task.isCompleted
@@ -36,6 +37,19 @@ class TaskAdapter(private val tasks: MutableList<Task>, private val listener: On
                 } else {
                     titleTextView.setTextColor(Color.BLACK)
                     descriptionTextView.setTextColor(Color.BLACK)
+                }
+            }
+        }*/
+        fun bind(task: Task, listener: OnTaskSelectedListener) {
+            titleTextView.text = task.title
+            descriptionTextView.text = task.description
+            completedCheckBox.isChecked = task.isCompleted
+
+            // Actualizar el listener luego de establecer el estado checked inicial
+            completedCheckBox.setOnCheckedChangeListener { _, isChecked ->
+                task.isCompleted = isChecked
+                if (isChecked) {
+                    listener.onTaskChecked(task)
                 }
             }
         }
@@ -55,9 +69,9 @@ class TaskAdapter(private val tasks: MutableList<Task>, private val listener: On
     // Vincular datos de una tarea específica al ViewHolder
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = tasks[position]
-        holder.bind(task)
+        holder.bind(task, listener)
         holder.itemView.setOnLongClickListener {
-            listener.onTaskSelected(task)
+            listener. onTaskSelected(task)
             true
         }
     }
