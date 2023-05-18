@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskSelectedListener {
 
         // Configurar el LinearLayoutManager y el adaptador del RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
-        taskAdapter = TaskAdapter(tasks, this)
+        taskAdapter = TaskAdapter(tasks,this)
         recyclerView.adapter = taskAdapter
 
         // Código para ItemTouchHelper

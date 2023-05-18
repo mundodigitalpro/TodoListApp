@@ -3,6 +3,7 @@ package com.josejordan.todolistapp
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
@@ -20,14 +21,15 @@ class TaskAdapter(
 
     // Clase ViewHolder que representa cada elemento de la lista
     class TaskViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val titleTextView: TextView = view.findViewById(R.id.title_text_view)
-        private val descriptionTextView: TextView = view.findViewById(R.id.description_text_view)
+        val titleEditText: EditText = view.findViewById(R.id.title_edit_text)
+        val descriptionEditText: EditText = view.findViewById(R.id.description_edit_text)
 
         fun bind(task: Task) {
-            titleTextView.text = task.title
-            descriptionTextView.text = task.description
+            titleEditText.setText(task.title)
+            descriptionEditText.setText(task.description)
         }
     }
+
 
     // Crear una instancia del ViewHolder inflando el diseño del elemento de la lista
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -44,9 +46,19 @@ class TaskAdapter(
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = tasks[position]
         holder.bind(task)
-        holder.itemView.setOnLongClickListener {
-            listener.onTaskSelected(task)
-            true
+
+        holder.itemView.setOnClickListener {
+            if(!holder.titleEditText.isEnabled){
+                holder.titleEditText.isEnabled = true
+                holder.descriptionEditText.isEnabled = true
+                holder.titleEditText.requestFocus()
+            } else {
+                holder.titleEditText.isEnabled = false
+                holder.descriptionEditText.isEnabled = false
+                task.title = holder.titleEditText.text.toString()
+                task.description = holder.descriptionEditText.text.toString()
+                updateTask(position, task)
+            }
         }
     }
 
