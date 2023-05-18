@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
+    card_view:cardElevation="4dp"
+    card_view:cardUseCompatPadding="true"
     card_view:cardCornerRadius="8dp">
 
     <RelativeLayout
@@ -16,16 +18,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
+            android:textColor="@color/black"
             android:enabled="false"
             android:background="@android:color/transparent"/>
 
-        <EditText
-            android:id="@+id/description_edit_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/title_edit_text"
-            android:enabled="false"
-            android:background="@android:color/transparent"/>
+
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>
