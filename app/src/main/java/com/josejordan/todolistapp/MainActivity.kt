@@ -6,15 +6,16 @@ import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 
-class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskSelectedListener {
+class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskClickListener{
 
     private lateinit var taskAdapter: TaskAdapter
-    private val tasks = mutableListOf<Task>()
+    private lateinit var taskViewModel: TaskViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,10 +24,24 @@ class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskSelectedListener {
         val titleEditText: EditText = findViewById(R.id.title_edit_text)
         val addButton: Button = findViewById(R.id.add_button)
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
-
         recyclerView.layoutManager = LinearLayoutManager(this)
-        taskAdapter = TaskAdapter(tasks)
+
+        // Inicializar el ViewModel
+        val taskDao = AppDatabase.getDatabase(this).taskDao()
+        val repository = TaskRepository(taskDao)
+        val viewModelFactory = TaskViewModelFactory(repository)
+        taskViewModel = ViewModelProvider(this, viewModelFactory)[TaskViewModel::class.java]
+
+        taskAdapter = TaskAdapter(emptyList<Task>().toMutableList(), this)
         recyclerView.adapter = taskAdapter
+
+        taskViewModel.allTasks.observe(this) { tasks ->
+            // Actualizar la lista de tareas en el adaptador cuando los datos cambian
+            tasks?.let {
+                taskAdapter.tasks = it.toMutableList()
+                taskAdapter.notifyDataSetChanged()
+            }
+        }
 
         val itemTouchHelper =
             ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
@@ -40,31 +55,25 @@ class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskSelectedListener {
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                     val position = viewHolder.adapterPosition
-                    val task = tasks[position]
-                    onTaskSwiped(task)
-                    val snackbar = Snackbar.make(
-                        findViewById(R.id.recycler_view),
-                        "Tarea terminada",
-                        Snackbar.LENGTH_SHORT
-                    )
-                    snackbar.show()
+                    val task = taskAdapter.tasks[position]
+                    taskViewModel.delete(task)
+                    snackBarMessage("Tarea terminada")
                 }
             })
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
         addButton.setOnClickListener {
             val title = titleEditText.text.toString()
-            val task = Task(title)
-            taskAdapter.addTask(task)
+            val task = Task(title=title)
+            taskViewModel.insert(task)
             titleEditText.text.clear()
             hideKeyboard(this@MainActivity)
-            val snackbar = Snackbar.make(
-                findViewById(R.id.recycler_view),
-                "Tarea Añadida",
-                Snackbar.LENGTH_SHORT
-            )
-            snackbar.show()
+            snackBarMessage("Tarea Añadida")
         }
+    }
+
+    private fun snackBarMessage(text: String) {
+        Snackbar.make(findViewById(R.id.recycler_view),text, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun hideKeyboard(activity: Activity) {
@@ -76,18 +85,8 @@ class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskSelectedListener {
         }
     }
 
-    override fun onTaskSwiped(task: Task) {
-        val position = tasks.indexOf(task)
-        if (position != -1) {
-            taskAdapter.deleteTask(position)
-            val snackbar = Snackbar.make(
-                findViewById(R.id.recycler_view),
-                "Tarea terminada",
-                Snackbar.LENGTH_SHORT
-            )
-            snackbar.show()
-
-        }
+    override fun onTaskClick(task: Task) {
+        taskViewModel.update(task)
     }
 
 }

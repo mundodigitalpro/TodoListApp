@@ -7,11 +7,13 @@ import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 
 class TaskAdapter(
-    private val tasks: MutableList<Task>
+    var tasks: MutableList<Task>,
+    private val onTaskClickListener: OnTaskClickListener
 ) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
-    interface OnTaskSelectedListener {
-        fun onTaskSwiped(task: Task)
+
+    interface OnTaskClickListener {
+        fun onTaskClick(task: Task)
     }
 
     // Clase ViewHolder que representa cada elemento de la lista
@@ -46,33 +48,11 @@ class TaskAdapter(
             } else {
                 holder.titleEditText.isEnabled = false
                 task.title = holder.titleEditText.text.toString()
-                updateTask(position, task)
+                onTaskClickListener.onTaskClick(task)
             }
         }
     }
 
-    // Método para agregar una nueva tarea al adaptador
-    fun addTask(task: Task) {
-        tasks.add(task)
-        notifyItemInserted(tasks.size - 1)
-        sortTasks()
-    }
-
-    // Método para actualizar una tarea en una posición específica del adaptador
-    fun updateTask(position: Int, task: Task) {
-        tasks[position] = task
-        notifyItemChanged(position)
-        sortTasks()
-    }
-
-    // Método para eliminar una tarea en una posición específica del adaptador
-    fun deleteTask(position: Int) {
-        tasks.removeAt(position)
-        notifyItemRemoved(position)
-        sortTasks()
-    }
-
-    // Método para ordenar las tareas en el adaptador
     fun sortTasks() {
         tasks.sortWith(compareBy { it.title })
         notifyDataSetChanged()
