@@ -6,16 +6,21 @@ import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.josejordan.todolistapp.data.Task
+import com.josejordan.todolistapp.presentation.TaskAdapter
+import com.josejordan.todolistapp.presentation.TaskViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskClickListener{
 
     private lateinit var taskAdapter: TaskAdapter
-    private lateinit var taskViewModel: TaskViewModel
+    private val taskViewModel: TaskViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,13 +30,6 @@ class MainActivity : AppCompatActivity(), TaskAdapter.OnTaskClickListener{
         val addButton: Button = findViewById(R.id.add_button)
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
-
-        // Inicializar el ViewModel
-        val taskDao = AppDatabase.getDatabase(this).taskDao()
-        val repository = TaskRepository(taskDao)
-        val viewModelFactory = TaskViewModelFactory(repository)
-        taskViewModel = ViewModelProvider(this, viewModelFactory)[TaskViewModel::class.java]
-
         taskAdapter = TaskAdapter(emptyList<Task>().toMutableList(), this)
         recyclerView.adapter = taskAdapter
 

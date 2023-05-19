@@ -1,10 +1,12 @@
-package com.josejordan.todolistapp
+package com.josejordan.todolistapp.presentation
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
+import com.josejordan.todolistapp.R
+import com.josejordan.todolistapp.data.Task
 
 class TaskAdapter(
     var tasks: MutableList<Task>,
@@ -53,8 +55,4 @@ class TaskAdapter(
         }
     }
 
-    fun sortTasks() {
-        tasks.sortWith(compareBy { it.title })
-        notifyDataSetChanged()
-    }
 }

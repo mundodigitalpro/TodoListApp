@@ -1,4 +1,4 @@
-package com.josejordan.todolistapp
+package com.josejordan.todolistapp.data
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
