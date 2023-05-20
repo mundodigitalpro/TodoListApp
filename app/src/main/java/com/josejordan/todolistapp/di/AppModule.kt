@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.josejordan.todolistapp.data.TaskDb
 import com.josejordan.todolistapp.data.TaskDao
+import com.josejordan.todolistapp.data.TaskRepository
+import com.josejordan.todolistapp.data.TaskRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,5 +30,10 @@ object AppModule {
     @Provides
     fun provideTaskDao(database: TaskDb): TaskDao {
         return database.taskDao()
+    }
+
+    @Provides
+    fun provideTaskRepository(taskDao: TaskDao): TaskRepository {
+        return TaskRepositoryImpl(taskDao)
     }
 }

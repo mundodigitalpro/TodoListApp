@@ -1,21 +1,15 @@
 package com.josejordan.todolistapp.data
 
 import androidx.lifecycle.LiveData
-import javax.inject.Inject
 
-class TaskRepository @Inject constructor(private val taskDao: TaskDao) {
+interface TaskRepository {
 
-    val allTasks: LiveData<List<Task>> = taskDao.getTasks()
+    val allTasks: LiveData<List<Task>>
 
-    suspend fun insert(task: Task) {
-        taskDao.insert(task)
-    }
+    suspend fun insert(task: Task)
 
-    suspend fun update(task: Task) {
-        taskDao.update(task)
-    }
+    suspend fun update(task: Task)
 
-    suspend fun delete(task: Task) {
-        taskDao.delete(task)
-    }
+    suspend fun delete(task: Task)
 }
+

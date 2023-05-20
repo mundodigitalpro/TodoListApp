@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
 class TaskViewModel @Inject constructor(
     private val repository: TaskRepository
@@ -16,17 +17,18 @@ class TaskViewModel @Inject constructor(
 
     val allTasks = repository.allTasks
 
-    fun insert(task: Task) = viewModelScope.launch(Dispatchers.IO) {
+    fun insert(task: Task) = viewModelScope.launch(Dispatchers.Unconfined) {
         repository.insert(task)
     }
 
-    fun update(task: Task) = viewModelScope.launch(Dispatchers.IO) {
+    fun update(task: Task) = viewModelScope.launch(Dispatchers.Unconfined) {
         repository.update(task)
     }
 
-    fun delete(task: Task) = viewModelScope.launch(Dispatchers.IO) {
+    fun delete(task: Task) = viewModelScope.launch(Dispatchers.Unconfined) {
         repository.delete(task)
     }
 }
+
 
 
